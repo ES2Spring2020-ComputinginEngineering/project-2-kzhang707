@@ -113,19 +113,63 @@ def update(centroids, assignments, glucose, hemoglobin, iteration):
     plt.show()
     return centroids_only.astype('float64')
 
+def stats(assignments, classification):
+    #this function takes two inputs: the final assignments, and classification
+    #it assumes that there are more 'no ckd' than 'ckd' assignments, based on the data set
+    #in the original data set, a classification of 1 = ckd, and 0 = no ckd
+    #if there are more 'ckd' than 'no ckd' assignments, 
+    #it is assumed the classification values are swapped (as the points themselves match up)
+    #in this case, the function swaps 0 and 1 within assignments
+    #it then counts the number of 1s and 0s in classification as actually_ckd and actually_nockd
+    #it initializes four counter variables, representing in order,
+    #no. observations correctly diagnosed with ckd, no. observations correctly diagnosed without ckd,
+    #no. observations incorrectly diagnosed with ckd, and no. observations incorrectly diagnosed without ckd
+    #it then calculates and prints the percentages for true/false positives and true/false negatives
+    if np.count_nonzero(assignments == 1) > np.count_nonzero(assignments == 0):
+        for i in range(len(assignments)):
+            if assignments[i] == 0.:
+                assignments[i] = 1.
+            elif assignments[i] == 1.:
+                assignments[i] = 0.
+    actually_ckd = np.count_nonzero(classification == 1)
+    actually_nockd = np.count_nonzero(classification == 0)
+    correct_ckd = 0
+    correct_nockd = 0
+    misdiagnosed_as_ckd = 0
+    misdiagnosed_as_nockd = 0
+    for i in range(len(assignments)):
+        if assignments[i] == classification[i]:
+            if assignments[i] == 1:
+                correct_ckd += 1
+            else:
+                correct_nockd += 1
+        else:
+            if assignments[i] == 0:
+                misdiagnosed_as_nockd += 1
+            else:
+                misdiagnosed_as_ckd += 1
+    print ('True Positives = ' + str(correct_ckd / actually_ckd * 100) + '%')
+    print ('False Positives = ' + str(misdiagnosed_as_ckd / actually_nockd * 100) + '%')
+    print ('True Negatives = ' + str(correct_nockd / actually_nockd * 100) + '%')
+    print ('False Negatives = ' + str(misdiagnosed_as_nockd / actually_ckd * 100) + '%')
+    return False
+    
 def clusterfinder (k, iterations):
     #this function takes two inputs: the no. of centroids, and the maximum no. of iterations
-    #it calls openckdfile() to create the glucose, hemoglobin and classification(unused) arrays
+    #it calls openckdfile() to create the glucose, hemoglobin and classification arrays
     #it calls create_centroids to create k random initial centroids
     #it then calls assign to assign observations to the centroids,
     #and calls update to modify the original centroids array based on the assignments.
     #these new centroids are graphed and used as an input for the next iteration.
     #after k iterations are complete, the final centroids are printed and returned
     glucose, hemoglobin, classification = openckdfile()
+    assignments = np.array([])
     centroids = create_centroids(k)
     for i in range(iterations + 1):
         assignments = assign(centroids, glucose, hemoglobin)
         centroids = update(centroids, assignments, glucose, hemoglobin, str(i))
     print('Final centroids (glucose, hemoglobin):')
     print(centroids)
+    if k == 2:
+        stats(assignments, classification)
     return centroids

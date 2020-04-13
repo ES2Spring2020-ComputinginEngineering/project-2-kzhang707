@@ -77,7 +77,7 @@ def graphTestCase (newglucose, newhemoglobin, glucose, hemoglobin, classificatio
     plt.title('Glucose vs. Hemoglobin')
     plt.plot(hemoglobin[classification==1],glucose[classification==1], "b.", label = "CKD")
     plt.plot(hemoglobin[classification==0],glucose[classification==0], "y.", label = "No CKD")
-    plt.plot(newhemoglobin, newglucose, 'r.', markersize = 20)
+    plt.plot(newhemoglobin, newglucose, 'r.', markersize = 20, label = 'Test Case')
     plt.xlabel("Hemoglobin")
     plt.ylabel("Glucose")
     plt.legend()
@@ -103,6 +103,7 @@ graphData(glucose, hemoglobin, classification)
 
 #creates 10 test cases, plots these test cases 
 #prints the classifications found using nearestNeighborClassifier and kNearestNeighborClassifier
+#1 represents CKD, 0 represents no CKD
 for i in range(10):
     newglucose, newhemoglobin = createTestCase()
     graphTestCase (newglucose, newhemoglobin, glucose, hemoglobin, classification)
