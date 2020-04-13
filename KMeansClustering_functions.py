@@ -2,7 +2,7 @@
 #ES2 Project 2
 #Step 4
 #NAME: Kevin Zhang
-#HOURS NEEDED: 12 (5 for pseudocode, 7 for code)
+#HOURS NEEDED: 15 (5 for pseudocode, 10 for code)
 #I worked alone on this part.
 #################
 
